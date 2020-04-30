@@ -14,6 +14,14 @@ Some will request login information within the command line after starting runni
 #### [addfileversions.py](/addfileversions.py)
 Python script that adds file versions to existing digital objects using an input CSV. The CSV should include a header row with the columns "digitalobject_uri", "file_uri_csv", and "caption_csv". The script assumes you want the file version to be published, but you can change that to false if necessary. 
 Requires the ArchivesSpace module written by Tristan Chambers to run, and an archviesspace.cfg file with your credentials for authentication.
+
+#### [archived_websites.py](/archived_websites.py)
+Python script that adds archival objects as children of existing archival objects and/or resources using an input CSV. Necessary columns are listed in the comments in the script. The script is configured specifically for Smith's addition of archived websites, but the JSON could be edited to apply to other cases.
+This script requires the ArchivesSnake client and a secrets.py file with your ArchivesSpace credentials for authentication.
+
+#### [archived_websites_add_dos.py](/archived_websites_add_dos.py)
+Python script that adds digital objects to existing archival objects using an input CSV. Necessary columns are listed in the comments in the script. The script is configured specifically for Smith's addition of archived websites, but the JSON could be edited to apply to other cases.
+This script requires a secrets.py file with your ArchivesSpace credentials for authentication.
 	
 #### [publish_do.py](/publish_do.py)
 Python script that publishes unpublished digital objects using an input CSV. The CSV should include a header row with the digital object uri in the first column.

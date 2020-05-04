@@ -31,7 +31,6 @@ def make_accession(accession):
 				 'publish': False,
 				 'provenance': f"{provenance_string1} {full_name} {provenance_string2}",
 				 'title': f"{full_name} {title_string}",
-				 'content_description': accession['content_description'],
 				 'general_note': f"{gen_note_aff}; {gen_note_living}.",
 				 
 #				 'use_restrictions': True, #Needs to be changed to false if they gave us copyright.

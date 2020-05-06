@@ -94,6 +94,25 @@ def make_agent_record(agent):
 
 	return agent_dict
 
+def create_agent_records(aspace, csvreader):
+	"""Takes a csvreader object. Iterated through it and creates the agents listed.
+	Returns a list of URIs for the respective records.
+	"""
+
+	agents = []
+	for row in csvreader:
+		if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE' and len(row['agent_id']) == 0:
+			record = make_agent_record(row)
+			try:
+				post = aspace.post('/agents/people', record)
+				logging.info('Agent record created for {}'.format(row['full_name'] + ' URI: ' + post['uri']))
+				agents.append( {
+					'name': row['full_name'],
+					'uri': post['uri'],
+				})
+			except Exception as e:
+				logging.warning('Failure to create agent record for {}: {}'.format(row['full_name'], e))
+	return agents
 
 if __name__ == "__main__":
 
@@ -110,17 +129,12 @@ if __name__ == "__main__":
 
 	logging.basicConfig(level=logging.INFO)
 
-	csv_file = cliArguments.CSVname
+	csv_filename = cliArguments.CSVname
 
 	# Reads CSV file
-	with open(csv_file, encoding="utf8", errors="ignore") as csvfile:
-		reader = csv.DictReader(csvfile)
+	with open(csv_filename, encoding="utf8", errors="ignore") as csvfile:
+		csvreader = csv.DictReader(csvfile)
+		agents = create_agent_records(aspace, csvreader)
 
-		for row in reader:
-			if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE' and len(row['agent_id']) == 0:
-				record = make_agent_record(row)
-				try:
-					post = aspace.post('/agents/people', record)
-					logging.info('Agent record created for {}'.format(row['full_name'] + ' URI: ' + post['uri']))
-				except Exception as e:
-					logging.warning('Failure to create agent record for {}: {}'.format(row['full_name'], e))
+	from pprint import pprint
+	pprint(agents)

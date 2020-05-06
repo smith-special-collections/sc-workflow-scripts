@@ -22,9 +22,9 @@ def make_agent_record(agent):
 	contacts['jsonmodel_type'] = 'agent_contact'
 	contacts['email'] = agent['email'] #does not cause issue if blank
 	try:
-			agent_dict['agent_contacts'].append(contacts)
-	except:
-			print ('issue with contacts')
+		agent_dict['agent_contacts'].append(contacts)
+	except KeyError:
+		logging.error ('issue with contacts', KeyError)
 
 	# Name information
 	# Make their preferred name
@@ -59,15 +59,15 @@ def make_agent_record(agent):
 	#Accounting for cases where they may not have a legal name different from their preferred name
 	if len(legal_name) != 0:
 		try:
-				agent_dict['names'].append(agent_names)
-				agent_dict['names'].append(agent_legal_name)
-		except:
-				print ('issue with legal names')
+			agent_dict['names'].append(agent_names)
+			agent_dict['names'].append(agent_legal_name)
+		except KeyError:
+			logging.error ('issue with legal names', KeyError)
 	else:
 		try:
-				agent_dict['names'].append(agent_names)
+			agent_dict['names'].append(agent_names)
 		except:
-				print ('issue with preferred names')
+			logging.error ('issue with preferred names', KeyError)
 
 
 	# Bioghist note on agent
@@ -83,13 +83,13 @@ def make_agent_record(agent):
 		agent_subnotes['content'] = agent['bioghist']
 		agent_subnotes['publish'] = True
 		try:
-				agent_notes['subnotes'].append(agent_subnotes)
-		except:
-				print ('issue with subnotes')
+			agent_notes['subnotes'].append(agent_subnotes)
+		except KeyError:
+			logging.error ('issue with subnotes', KeyError)
 		try:
-				agent_dict['notes'].append(agent_notes)
-		except:
-				print ('issue with notes')
+			agent_dict['notes'].append(agent_notes)
+		except KeyError:
+			logging.error ('issue with notes', KeyError)
 
 
 	return agent_dict
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 		reader = csv.DictReader(csvfile)
 
 		for row in reader:
-			if row['complete'] == 'TRUE':
+			if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE' and len(row['agent_id']) == 0:
 				record = make_agent_record(row)
 				try:
 					post = aspace.post('/agents/people', record)

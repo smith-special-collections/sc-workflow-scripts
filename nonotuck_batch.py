@@ -30,7 +30,7 @@ def make_agent(row, aspace):
             agent_uri = None
     # Otherwise just get it from the spreadsheet
     else:
-        agent_uri = 'http.....' + row['agent_id'] # TODO: Add the correct prefix
+        agent_uri = '/agents/people/' + row['agent_id']
 
     return agent_uri
 

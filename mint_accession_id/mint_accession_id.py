@@ -78,7 +78,7 @@ def get_id_numbers(accession_idS):
         accession_id_numberS.append(int(accession_id['id_2']))
     return accession_id_numberS
 
-def get_unique_accession_id(aspace_connection, repository_number, repository_letter_code):
+def get_unique_accession_id(aspace, repository_number, repository_letter_code, all_accessions_data):
     """Contacts the ArchivesSpace API and gets a list of IDs from a given repo.
     Finds the latest ID and returns it in the form of a dictionary.
     e.g. {'id_0': 2020, 'id_1': 'A', 'id_2': '0012'}
@@ -87,8 +87,8 @@ def get_unique_accession_id(aspace_connection, repository_number, repository_let
     # What year is it?
     current_year = datetime.now().year
     logging.info(f"Making new ID for {current_year}")
-
-    accessionS = aspace.getPaged(f"/repositories/{repository_number}/accessions")
+    accessionS = all_accessions_data
+#    accessionS = aspace.getPaged(f"/repositories/{repository_number}/accessions")
 #    accessionS = pickle.load(open('accessions1109.pickle', 'rb')) # DEBUG trick
     accession_idS = get_accession_ids(accessionS)
     ids_for_this_year = filter_ids_by_year(accession_idS, current_year)

@@ -23,7 +23,7 @@ DATE = datetime.date.today()
 DATE = DATE.__str__()
 
 
-def make_accession(accession):
+def make_accession(accession, agent_uri, accession_id):
 	full_name = accession['full_name']
 	gen_note_aff = accession['affiliation']
 	gen_note_living = accession['where_living']
@@ -35,8 +35,9 @@ def make_accession(accession):
 				 
 #				 'use_restrictions': True, #Needs to be changed to false if they gave us copyright.
 #				 'use_restrictions_note': 'Copyright info.', #Needs to be populated from spreadsheet.
-				 'id_0': '2020',
-				 'id_1': 'A',
+				 'id_0': str(accession_id['id_0']),
+				 'id_1': str(accession_id['id_1']),
+				 'id_2': str(accession_id['id_2']),
 				 'acquisition_type': 'gift',
 				 'resource_type': 'papers',
 				 'accession_date': DATE,
@@ -56,16 +57,6 @@ def make_accession(accession):
 	except:
  			print ('issue with affiliation')
 
-	
-	# Id
-	try:
-		i2 = str(accession['id_2']).split('.')
-		acc_dict['id_2'] = i2[1]
-		if len(acc_dict['id_2']) < 4:
-			while len(acc_dict['id_2']) < 4:
-				acc_dict['id_2'] = acc_dict['id_2'] + '0'
-	except:
-		print ('issue with id_2')
 	
 	# Content Description
 	if accession['content_description'] != None:
@@ -87,12 +78,12 @@ def make_accession(accession):
 		acc_dict['use_restrictions_note'] = 'To the extent that they own copyright, donor has retained copyright in their works donated to Smith College.'
 		
 	# Access restrictions
-	if accession['access_restrictions'] == 'The materials I contribute can be made available to the public immediately':
+	if accession['access'] == 'The materials I contribute can be made available to the public immediately':
 		acc_dict['access_restrictions'] = False
-		acc_dict['access_restrictions_note'] = accession['access_restrictions']
+		acc_dict['access_restrictions_note'] = accession['access']
 	else:
 		acc_dict['access_restrictions'] = True
-		acc_dict['access_restrictions_note'] = accession['access_restrictions']
+		acc_dict['access_restrictions_note'] = accession['access']
 		
 		
 	# Restrictions apply checkbox
@@ -107,19 +98,19 @@ def make_accession(accession):
 	acc_dict['linked_agents'] = []
 	linked_agent = {}
 	linked_agent['role'] = 'source'
-	linked_agent['ref'] = accession['agent_uri']
+	linked_agent['ref'] = agent_uri
 	try:
  			acc_dict['linked_agents'].append(linked_agent)
 	except:
  			print ('issue with linked agent')
  			
 	# Add donor agent as creator only if they say "yes" they created it	
-	role = str(accession['role'])
+	role = str(accession['created'])
 	yes = 'Yes'
 	if yes in role:
 		linked_agent_creator = {}
 		linked_agent_creator['role'] = 'creator'
-		linked_agent_creator['ref'] = accession['agent_uri']
+		linked_agent_creator['ref'] = agent_uri
 		try:
  			acc_dict['linked_agents'].append(linked_agent_creator)
 		except:

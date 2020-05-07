@@ -83,6 +83,10 @@ if __name__ == "__main__":
                 accession_id = mint_accession_id.get_unique_accession_id(aspace, ASPACE_REPO_NUMBER, ASPACE_REPO_CODE, all_accessions_data)
                 record = make_accession(row, agent_uri, aspace)
                 if record is not None:
+                    # Keep a local mirror of the state of accession records on the AS
+                    # side, so that get_unique_accession_id() is working with
+                    # up to date information, without having to query the server
+                    # which is slooooow.
                     all_accessions_data.append(record)
                 pdb.set_trace()
     pprint(report)

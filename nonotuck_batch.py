@@ -88,5 +88,4 @@ if __name__ == "__main__":
                     # up to date information, without having to query the server
                     # which is slooooow.
                     all_accessions_data.append(record)
-                pdb.set_trace()
     pprint(report)

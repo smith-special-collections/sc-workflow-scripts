@@ -45,7 +45,7 @@ def make_accession(accession, agent_uri, accession_id):
 		if key == accession['affiliation'].lower().strip():
 			affiliation = AFFILIATION_DICT[key]
 
-	acc_dict['classifications']	= []
+	acc_dict['classifications'] = []
 	classification = {}
 	classification['ref'] = affiliation
 

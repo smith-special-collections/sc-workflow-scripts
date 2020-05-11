@@ -92,8 +92,7 @@ if __name__ == "__main__":
         report = {}
         for row in csvreader:
             logging.error(row['full_name'])
-            # If the row passes our criteria for completeness:
-            if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE':
+            if row['nanci_checkB1'].lower() == 'true' and row['nanci_checkB2'].lower() == 'true' and row['nanci_checkA'].lower == 'true':
                 agent_uri = make_agent(row, aspace)
                 if agent_uri is None:
                     logging.error(f"No agent created or found, skipping this record! {row['full_name']}")

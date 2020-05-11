@@ -32,9 +32,9 @@ def make_archival_object(row, agent_uri, accession_id):
     ancestors['ref'] = '/repositories/4/resources/1630'
     ancestors['level'] = 'collection'
     try:
-            ao_dict['ancestors'].append(ancestors)
-    except:
-            print ('issue with ancestors')
+        ao_dict['ancestors'].append(ancestors)
+    except KeyError:
+        logging.error ('issue with ancestors', KeyError)
 
 
 
@@ -112,11 +112,11 @@ def make_archival_object(row, agent_uri, accession_id):
 
     content_description = row['content_description']
 
-    #Now make the combined description
-    if file10 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file9}{file10}"
-    elif file9 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file9}"
+    #Now make the combined description. File 9 and 10 are out of order on the google form so this accounts for that error.
+    if file9 != None:
+        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file10}{file9}"
+    elif file10 != None:
+        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file10}"
     elif file8 != None:
         combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}"
     elif file7 != None:
@@ -168,24 +168,23 @@ def make_archival_object(row, agent_uri, accession_id):
     userestrict_subnote['jsonmodel_type'] = 'note_text'
     userestrict_subnote['publish'] = True
 
-    if len(bioghist) != 0:
-        try:
-            bio_note['subnotes'].append(bio_subnote)
-        except:
-            print ('issue with bio subnote')
-        try:
-            ao_dict['notes'].append(bio_note)
-        except:
-            print ('issue with bio note')
-    if len(content_description) != 0:
-        try:
-            sc_note['subnotes'].append(sc_subnote)
-        except:
-            print ('issue with sc subnote')
-        try:
-            ao_dict['notes'].append(sc_note)
-        except:
-            print ('issue with sc note')
+    try:
+        bio_note['subnotes'].append(bio_subnote)
+    except KeyError:
+        logging.error ('issue with bio subnote', KeyError)
+    try:
+        ao_dict['notes'].append(bio_note)
+    except KeyError:
+        logging.error ('issue with bio note', KeyError)
+        
+    try:
+        sc_note['subnotes'].append(sc_subnote)
+    except KeyError:
+        logging.error ('issue with sc subnote', KeyError)
+    try:
+        ao_dict['notes'].append(sc_note)
+    except KeyError:
+        logging.error ('issue with sc note', KeyError)
 
     # Use Restrictions Note
     if row['copyright'] == 'Public Domain':
@@ -198,12 +197,12 @@ def make_archival_object(row, agent_uri, accession_id):
         userestrict_subnote['content'] = 'To the extent that they own copyright, donor has retained copyright in their works donated to Smith College.'
     try:
         userestrict_note['subnotes'].append(userestrict_subnote)
-    except:
-        print ('issue with userestrict subnote')
+    except KeyError:
+        logging.error ('issue with userestrict subnote', KeyError)
     try:
         ao_dict['notes'].append(userestrict_note)
-    except:
-        print ('issue with userestrict note')
+    except KeyError:
+        logging.error ('issue with userestrict note', KeyError)
 
 
     # Restrictions apply checkbox
@@ -222,12 +221,12 @@ def make_archival_object(row, agent_uri, accession_id):
         accessrestrict_subnote['content'] = 'At the direction of the donor, this material is closed until January 1, 2026.'
         try:
             accessrestrict_note['subnotes'].append(accessrestrict_subnote)
-        except:
-            print ('issue with accessrestrict subnote')
+        except KeyError:
+            logging.error ('issue with accessrestrict subnote', KeyError)
         try:
             ao_dict['notes'].append(accessrestrict_note)
-        except:
-            print ('issue with accessrestrict note')
+        except KeyError:
+            logging.error ('issue with accessrestrict note', KeyError)
 
     # Add donor agent as creator only if they say "yes" they created it
     role = str(row['created'])
@@ -239,16 +238,16 @@ def make_archival_object(row, agent_uri, accession_id):
         linked_agent_creator['ref'] = agent_uri
         try:
             ao_dict['linked_agents'].append(linked_agent_creator)
-        except:
-            print ('issue with creator linked agent')
+        except KeyError:
+            logging.error ('issue with creator linked agent', KeyError)
 
     return ao_dict
 
 def create_archival_object_records(aspace, csvreader):
-    """Takes a csvreader object. Iterated through it and creates the archival objects listed."""
+    """Takes a csvreader object. Iterates through it and creates the archival objects listed."""
     archival_objects = []
     for row in csvreader:
-        if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE':
+        if row['nanci_checkB1'].lower() == 'true' and row['nanci_checkB2'].lower() == 'true' and row['nanci_checkA'].lower() == 'true':
             record = make_archival_object(row)
         try:
             post = aspace.post('/repositories/4/archival_objects', record)

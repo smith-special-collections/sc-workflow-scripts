@@ -46,7 +46,7 @@ renamed = merged_csv.rename(columns={'Nanci confirm Deed of Gift is complete':'n
        'File 8: Upload your file or zipped folder of files':'file8_upload',
        'Do you have another file to upload?.7':'anotherfile8',
        'File 9: Briefly describe this file or zipped folder of files (250 characters, or about 40 words maximum)':'file9_desc',
-       'File 9: When was this item created?':'file9:date',
+       'File 9: When was this item created?':'file9_date',
        'File 9: Upload your file or zipped folder of files':'file9_upload',
        'Do you have another file to upload?.8':'anotherfile9',
        'File 10: Briefly describe this file or zipped folder of files (250 characters, or about 40 words maximum)':'file10_desc',

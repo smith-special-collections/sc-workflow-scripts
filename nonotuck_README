@@ -1,0 +1,16 @@
+# Setup
+Copy nonotuck_config-tristan.py to nonotuck_config-ENVIRONMENT.py replacing ENVIRONMENT with the current environment. Change the values to match your current environment. Create a symlink from this new file to nonotuck_config.py.
+
+```
+ln -s nonotuck_config-ENVIRONMENT.py nonotuck_config.py
+```
+
+If desired, commit the new config file to the git repository.
+
+```
+git add nonotuck_config-ENVIRONMENT.py
+```
+
+Don't worry, the symlink will NOT be committed, because it's in the .gitignore file.
+
+The Nonotuck scripts will now read the configuration on execution.

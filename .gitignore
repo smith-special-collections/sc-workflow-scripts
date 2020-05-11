@@ -1,4 +1,5 @@
 # Project specific
+nonotuck_config.py
 /archivesspace
 *.log
 archivesspace.cfg

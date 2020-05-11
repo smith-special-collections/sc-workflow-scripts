@@ -8,6 +8,9 @@ import logging
 import datetime
 import csv
 
+from nonotuck_config import Config
+config = Config
+
 # for debugging, remove
 from pprint import pprint
 import pickle 
@@ -74,12 +77,13 @@ if __name__ == "__main__":
         report = {}
         for row in csvreader:
             logging.error(row['full_name'])
+            # If the row passes our criteria for completeness:
             if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE':
                 agent_uri = make_agent(row, aspace)
                 if agent_uri is None:
                     logging.error(f"No agent created or found, skipping this record! {row['full_name']}")
                     continue # Go back to the top of the loop
-                # First, get ourselves and ID
+                # First, get ourselves an ID
                 accession_id = mint_accession_id.get_unique_accession_id(aspace, ASPACE_REPO_NUMBER, ASPACE_REPO_CODE, all_accessions_data)
                 record = make_accession(row, agent_uri, aspace)
                 if record is not None:

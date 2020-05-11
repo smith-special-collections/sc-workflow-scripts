@@ -62,16 +62,17 @@ def make_accession(accession, agent_uri, accession_id):
     # Content Description
     if accession['content_description'] != None:
         acc_dict['content_description'] = accession['content_description']
+      
 
 
     #Use restrictions
-    if accession['copyright'] == 'public domain':
+    if accession['copyright'] == 'Public Domain':
         acc_dict['use_restrictions'] = False
         acc_dict['use_restrictions_note'] = 'To the extent that they own copyright, donor has transferred any intellectual rights of their work to the public domain. Rights will be marked by a Creative Commons CC0 license.'
-    elif accession['copyright'] == 'college':
+    elif accession['copyright'] == 'Smith Copyright':
         acc_dict['use_restrictions'] = False
         acc_dict['use_restrictions_note'] = 'To the extent that they own copyright, donor has transferred any intellectual rights of their work to Smith College.'
-    elif accession['copyright'] == 'donor but cc 4.0':
+    elif accession['copyright'] == 'Donor with cc 4.0':
         acc_dict['use_restrictions'] = True
         acc_dict['use_restrictions_note'] = 'To the extent that they own copyright, donor has retained copyright in their works donated to Smith College, but the donor grants Smith a nonexclusive right to authorize all uses of these materials for research, scholarly or other purposes pursuant to a Creative Commons Attribution 4.0 International License.'
     else:
@@ -103,7 +104,7 @@ def make_accession(accession, agent_uri, accession_id):
     try:
          acc_dict['linked_agents'].append(linked_agent)
     except KeyError:
-         logging.error ('issue with linked agent', KeyError)
+         logging.error ('issue with linked agent', KeyError) 
 
     # Add donor agent as creator only if they say "yes" they created it
     role = str(accession['created'])
@@ -122,7 +123,7 @@ def make_accession(accession, agent_uri, accession_id):
 def create_accession_records(aspace, csvreader):
     accessions = []
     for row in csvreader:
-        if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE':
+        if row['nanci_checkB1'].lower() == 'true' and row['nanci_checkB2'].lower() == 'true' and row['nanci_checkA'].lower() == 'true':
             accession_record = make_accession(row)
             try:
                 post = aspace.post('/repositories/4/accessions', accession_record)

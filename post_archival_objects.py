@@ -16,9 +16,8 @@ DATE = datetime.date.today()
 DATE = DATE.__str__()
 
 
-def make_archival_object(archival_object, accession_id, agent_uri):
-    full_name = archival_object['full_name']
-    component_id = str(archival_object['id_2']).zfill(ID_ZERO_PADDING)
+def make_archival_object(row, agent_uri, accession_id):
+    full_name = row['full_name']
     ao_dict = {'jsonmodel_type':'archival_object',
                  'publish': True,
                  'component_id': str(accession_id['id_0']) + '-' + str(accession_id['id_1']) + '-' + str(accession_id['id_2']),
@@ -37,87 +36,87 @@ def make_archival_object(archival_object, accession_id, agent_uri):
     except:
             print ('issue with ancestors')
 
-    
-    
+
+
     # Building the file descriptions. This works but is messy. Jinja template would be better if have time.
-    if len(archival_object['file1_desc']) != 0:
-        if len(archival_object['file1_date']) != 0:
-            file1 = 'Includes: ' + archival_object['file1_desc'] + ', ' + archival_object['file1_date']
+    if len(row['file1_desc']) != 0:
+        if len(row['file1_date']) != 0:
+            file1 = 'Includes: ' + str(row['file1_desc']).strip() + ', ' + row['file1_date']
         else:
-            file1 = 'Includes: ' + archival_object['file1_desc']
+            file1 = 'Includes: ' + str(row['file1_desc']).strip()
     else:
         file1 = None
-    if len(archival_object['file2_desc']) != 0:
-        if len(archival_object['file2_date']) != 0:
-            file2 = '; ' + archival_object['file2_desc'] + ', ' + archival_object['file2_date']
+    if len(row['file2_desc']) != 0:
+        if len(row['file2_date']) != 0:
+            file2 = '; ' + str(row['file2_desc']).strip() + ', ' + row['file2_date']
         else:
-            file2 = '; ' + archival_object['file2_desc']
+            file2 = '; ' + str(row['file2_desc']).strip()
     else:
         file2 = None
-    if len(archival_object['file3_desc']) != 0:
-        if len(archival_object['file3_date']) != 0:
-            file3 = '; ' + archival_object['file3_desc'] + ', ' + archival_object['file3_date']
+    if len(row['file3_desc']) != 0:
+        if len(row['file3_date']) != 0:
+            file3 = '; ' + str(row['file3_desc']).strip() + ', ' + row['file3_date']
         else:
-            file3 = '; ' + archival_object['file3_desc']
+            file3 = '; ' + str(row['file3_desc']).strip()
     else:
         file3 = None
-    if len(archival_object['file4_desc']) != 0:
-        if len(archival_object['file4_date']) != 0:
-            file4 = '; ' + archival_object['file4_desc'] + ', ' + archival_object['file4_date']
+    if len(row['file4_desc']) != 0:
+        if len(row['file4_date']) != 0:
+            file4 = '; ' + str(row['file4_desc']).strip() + ', ' + row['file4_date']
         else:
-            file4 = '; ' + archival_object['file4_desc']
+            file4 = '; ' + str(row['file4_desc']).strip()
     else:
         file4 = None
-    if len(archival_object['file5_desc']) != 0:
-        if len(archival_object['file5_date']) != 0:
-            file5 = '; ' + archival_object['file5_desc'] + ', ' + archival_object['file5_date']
+    if len(row['file5_desc']) != 0:
+        if len(row['file5_date']) != 0:
+            file5 = '; ' + str(row['file5_desc']).strip() + ', ' + row['file5_date']
         else:
-            file5 = '; ' + archival_object['file5_desc']
+            file5 = '; ' + str(row['file5_desc']).strip()
     else:
         file5 = None
-    if len(archival_object['file6_desc']) != 0:
-        if len(archival_object['file6_date']) != 0:
-            file6 = '; ' + archival_object['file6_desc'] + ', ' + archival_object['file6_date']
+    if len(row['file6_desc']) != 0:
+        if len(row['file6_date']) != 0:
+            file6 = '; ' + str(row['file6_desc']).strip() + ', ' + row['file6_date']
         else:
-            file6 = '; ' + archival_object['file6_desc']
+            file6 = '; ' + str(row['file6_desc']).strip()
     else:
         file6 = None
-    if len(archival_object['file7_desc']) != 0:
-        if len(archival_object['file7_date']) != 0:
-            file7 = '; ' + archival_object['file7_desc'] + ', ' + archival_object['file7_date']
+    if len(row['file7_desc']) != 0:
+        if len(row['file7_date']) != 0:
+            file7 = '; ' + str(row['file7_desc']).strip() + ', ' + row['file7_date']
         else:
-            file7 = '; ' + archival_object['file7_desc']
+            file7 = '; ' + str(row['file7_desc']).strip()
     else:
         file7 = None
-    if len(archival_object['file8_desc']) != 0:
-        if len(archival_object['file8_date']) != 0:
-            file8 = '; ' + archival_object['file8_desc'] + ', ' + archival_object['file8_date']
+    if len(row['file8_desc']) != 0:
+        if len(row['file8_date']) != 0:
+            file8 = '; ' + str(row['file8_desc']).strip() + ', ' + row['file8_date']
         else:
-            file8 = '; ' + archival_object['file8_desc']
+            file8 = '; ' + str(row['file8_desc']).strip()
     else:
         file8 = None
-    if len(archival_object['file9_desc']) != 0:
-        if len(archival_object['file9_date']) != 0:
-            file9 = '; ' + archival_object['file9_desc'] + ', ' + archival_object['file9_date']
+    if len(row['file9_desc']) != 0:
+        if len(row['file9_date']) != 0:
+            file9 = '; ' + str(row['file9_desc']).strip() + ', ' + row['file9_date']
         else:
-            file9 = '; ' + archival_object['file9_desc']
+            file9 = '; ' + str(row['file9_desc']).strip()
     else:
         file9 = None
-    if len(archival_object['file10_desc']) != 0:
-        if len(archival_object['file10_date']) != 0:
-            file10 = '; ' + archival_object['file10_desc'] + ', ' + archival_object['file10_date']
+    if len(row['file10_desc']) != 0:
+        if len(row['file10_date']) != 0:
+            file10 = '; ' + str(row['file10_desc']).strip() + ', ' + row['file10_date']
         else:
-            file10 = '; ' + archival_object['file10_desc']
+            file10 = '; ' + str(row['file10_desc']).strip()
     else:
         file10 = None
-    
-    content_description = archival_object['content_description']
-        
+
+    content_description = row['content_description']
+
     #Now make the combined description
     if file10 != None:
         combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file9}{file10}"
     elif file9 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file9}" 
+        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file9}"
     elif file8 != None:
         combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}"
     elif file7 != None:
@@ -127,20 +126,20 @@ def make_archival_object(archival_object, accession_id, agent_uri):
     elif file5 != None:
         combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}"
     elif file4 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}"    
+        combined_description = f"{content_description} {file1}{file2}{file3}{file4}"
     elif file3 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}"   
+        combined_description = f"{content_description} {file1}{file2}{file3}"
     elif file2 != None:
-        combined_description = f"{content_description} {file1}{file2}"  
+        combined_description = f"{content_description} {file1}{file2}"
     elif file1 != None:
-        combined_description = f"{content_description} {file1}" 
+        combined_description = f"{content_description} {file1}"
     else:
         combined_description = f"{content_description}"
-        
+
     # Notes
-    bioghist = archival_object['bioghist']
-    gen_note_aff = archival_object['affiliation']
-    gen_note_living = archival_object['where_living']
+    bioghist = row['bioghist']
+    gen_note_aff = row['affiliation']
+    gen_note_living = row['where_living']
     ao_dict['notes'] = []
     bio_note = {}
     bio_note['jsonmodel_type'] = 'note_multipart'
@@ -168,7 +167,7 @@ def make_archival_object(archival_object, accession_id, agent_uri):
     userestrict_subnote = {}
     userestrict_subnote['jsonmodel_type'] = 'note_text'
     userestrict_subnote['publish'] = True
-    
+
     if len(bioghist) != 0:
         try:
             bio_note['subnotes'].append(bio_subnote)
@@ -189,11 +188,11 @@ def make_archival_object(archival_object, accession_id, agent_uri):
             print ('issue with sc note')
 
     # Use Restrictions Note
-    if archival_object['copyright'] == 'Public Domain':
+    if row['copyright'] == 'Public Domain':
         userestrict_subnote['content'] = 'To the extent that they own copyright, donor has transferred any intellectual rights of their work to the public domain. Rights will be marked by a Creative Commons CC0 license.'
-    elif archival_object['copyright'] == 'Smith Copyright':
+    elif row['copyright'] == 'Smith Copyright':
         userestrict_subnote['content'] = 'To the extent that they own copyright, donor has transferred any intellectual rights of their work to Smith College.'
-    elif archival_object['copyright'] == 'Donor with cc 4.0':
+    elif row['copyright'] == 'Donor with cc 4.0':
         userestrict_subnote['content'] = 'To the extent that they own copyright, donor has retained copyright in their works donated to Smith College, but the donor grants Smith a nonexclusive right to authorize all uses of these materials for research, scholarly or other purposes pursuant to a Creative Commons Attribution 4.0 International License.'
     else:
         userestrict_subnote['content'] = 'To the extent that they own copyright, donor has retained copyright in their works donated to Smith College.'
@@ -205,10 +204,10 @@ def make_archival_object(archival_object, accession_id, agent_uri):
         ao_dict['notes'].append(userestrict_note)
     except:
         print ('issue with userestrict note')
-        
-        
+
+
     # Restrictions apply checkbox
-    if archival_object['access_restrictions'] == 'The materials I contribute can be made available to the public immediately':
+    if row['access'] == 'The materials I contribute can be made available to the public immediately':
         ao_dict['restrictions_apply'] = False
     else:
         ao_dict['restrictions_apply'] = True
@@ -229,9 +228,9 @@ def make_archival_object(archival_object, accession_id, agent_uri):
             ao_dict['notes'].append(accessrestrict_note)
         except:
             print ('issue with accessrestrict note')
-            
-    # Add donor agent as creator only if they say "yes" they created it 
-    role = str(archival_object['role'])
+
+    # Add donor agent as creator only if they say "yes" they created it
+    role = str(row['created'])
     yes = 'Yes'
     if yes in role:
         ao_dict['linked_agents'] = []
@@ -245,6 +244,17 @@ def make_archival_object(archival_object, accession_id, agent_uri):
 
     return ao_dict
 
+def create_archival_object_records(aspace, csvreader):
+    """Takes a csvreader object. Iterated through it and creates the archival objects listed."""
+    archival_objects = []
+    for row in csvreader:
+        if row['nanci_checkB1'] == 'TRUE' and row['nanci_checkB2'] == 'TRUE' and row['nanci_checkA'] == 'TRUE':
+            record = make_archival_object(row)
+        try:
+            post = aspace.post('/repositories/4/archival_objects', record)
+            logging.info('Archival object record created for {}'.format(row['full_name'] + " New URI: " + post['uri']))
+        except Exception as e:
+            logging.warning('Failure to create archival object record for {}: {}'.format(row['full_name'], e))
 
 if __name__ == "__main__":
 
@@ -261,17 +271,11 @@ if __name__ == "__main__":
 
     logging.basicConfig(level=logging.INFO)
 
-    csv_file = cliArguments.CSVname
+    csv_filename = cliArguments.CSVname
 
     # Reads CSV file
-    with open(csv_file, encoding="utf8", errors="ignore") as csvfile:
-        reader = csv.DictReader(csvfile)
-
-        for row in reader:
-            if row['complete'] == 'TRUE':
-                record = make_archival_object(row)
-                try:
-                    post = aspace.post('/repositories/4/archival_objects', record)
-                    logging.info('Archival object record created for {}'.format(row['full_name'] + " New URI: " + post['uri']))
-                except Exception as e:
-                    logging.warning('Failure to create archival object record for {}: {}'.format(row['full_name'], e))
+    with open(csv_filename, encoding="utf8", errors="ignore") as csvfile:
+        csvreader = csv.DictReader(csvfile)
+        archival_objects = create_archival_object_records(aspace, csvreader)
+    from pprint import pprint
+    pprint(archival_objects)

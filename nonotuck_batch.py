@@ -1,5 +1,6 @@
 import post_agents
 import post_accessions_concat
+import post_archival_objects
 import mint_accession_id.mint_accession_id as mint_accession_id
 
 from archivesspace import archivesspace
@@ -13,7 +14,7 @@ config = Config
 
 # for debugging, remove
 from pprint import pprint
-import pickle 
+import pickle
 import pdb
 
 ASPACE_REPO_CODE = 'A'
@@ -46,6 +47,15 @@ def make_accession(row, agent_uri, aspace):
     except Exception as e:
         logging.warning('Failure to create accession record for {}: {}'.format(row['full_name'], e))
         return None
+
+def make_archival_object(row, agent_uri, aspace):
+    archival_object_record = post_archival_objects.make_archival_object(row, agent_uri, accession_id)
+    try:
+        post = aspace.post('/repositories/4/archival_objects', archival_object_record)
+        logging.info('Archival object record created for {}'.format(row['full_name'] + " New URI: " + post['uri']))
+    except Exception as e:
+        logging.warning('Failure to create archival object record for {}: {}'.format(row['full_name'], e))
+
 
 if __name__ == "__main__":
     CONFIGFILE = "archivesspace.cfg"
@@ -86,10 +96,11 @@ if __name__ == "__main__":
                 # First, get ourselves an ID
                 accession_id = mint_accession_id.get_unique_accession_id(aspace, ASPACE_REPO_NUMBER, ASPACE_REPO_CODE, all_accessions_data)
                 record = make_accession(row, agent_uri, aspace)
+                archival_object_record = make_archival_object(row, agent_uri, aspace)
                 if record is not None:
                     # Keep a local mirror of the state of accession records on the AS
                     # side, so that get_unique_accession_id() is working with
                     # up to date information, without having to query the server
                     # which is slooooow.
                     all_accessions_data.append(record)
-    pprint(report)
+        pprint(report)

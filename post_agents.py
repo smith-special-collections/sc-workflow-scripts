@@ -134,7 +134,4 @@ if __name__ == "__main__":
 	# Reads CSV file
 	with open(csv_filename, encoding="utf8", errors="ignore") as csvfile:
 		csvreader = csv.DictReader(csvfile)
-		agents = create_agent_records(aspace, csvreader)
-
-	from pprint import pprint
-	pprint(agents)
+		create_agent_records(aspace, csvreader)

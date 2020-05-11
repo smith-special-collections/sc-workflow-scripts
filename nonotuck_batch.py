@@ -2,6 +2,7 @@ import post_agents
 import post_accessions_concat
 import post_archival_objects
 import mint_accession_id.mint_accession_id as mint_accession_id
+from nonotuck_file_manipulation import map_file_data, reorganize_files
 
 from archivesspace import archivesspace
 import argparse
@@ -19,6 +20,10 @@ import pdb
 
 ASPACE_REPO_CODE = 'A'
 ASPACE_REPO_NUMBER = 4
+
+logging.basicConfig(level=logging.INFO)
+logging.getLogger("requests").setLevel(logging.WARNING)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
 
 def make_agent(row, aspace):
     # If there is not an agent_id make an agent
@@ -103,4 +108,12 @@ if __name__ == "__main__":
                     # up to date information, without having to query the server
                     # which is slooooow.
                     all_accessions_data.append(record)
+                    ### Do file manipulation
+                    # Map google drive URLs to filenames and paths in the synced
+                    # drive folder
+                    submission_file_data = map_file_data(row, drive_id_index, accession_id)
+                    # Now copy the files into a desired human friendly structure
+                    # in the working directory
+                    reorganize_files(submission_file_data, config.working_dir)
+
         pprint(report)

@@ -15,14 +15,14 @@ logging.basicConfig(level=logging.DEBUG)
 
 def make_drive_id_index_file(drive_command_path, drive_sync_dir, output_file):
     logging.debug("Fetching Google Drive file ID index")
-    os.system(f'{config.drive_command_path} id -depth 10 "{config.drive_sync_dir}" > {output_file}')
+    os.system(f'{drive_command_path} id -depth 10 "{drive_sync_dir}" > {output_file}')
 
 def parse_drive_id_index(drive_id_index_filename):
     """Parse an index file created by the 'drive' utility.
     Example command for generating the file:
     `drive id -depth 5 COVID-19\ Chronicles\ collecting\ form\ and\ responses/ > drive_id_index.txt`
     """
-    with open(config.drive_id_index_filename, "r") as drive_id_index_file:
+    with open(drive_id_index_filename, "r") as drive_id_index_file:
         id_path_index = {}
         for line in drive_id_index_file:
             # Skip the first header line
@@ -73,7 +73,7 @@ def reorganize_files(submission_file_data, destination):
     structure in the given destination directory.
     """
     destination_dir_name = submission_file_data['submission_id'] + '_' + submission_file_data['accession_id']
-    destination_dir_path = config.working_dir + '/' + destination_dir_name
+    destination_dir_path = destination + '/' + destination_dir_name
     logging.debug(f"Making dir: {destination_dir_path}")
     os.mkdir(destination_dir_path)
     for file_data in submission_file_data['files']:
@@ -91,7 +91,7 @@ if __name__ == "__main__":
     # config.drive_command_path = "/Users/tchambers/go/bin/drive"
     # config.working_dir = "/tmp/workingdir"
 
-    make_drive_id_index_file(config.drive_command_path, config.drive_sync_dir, config.drive_id_index_filename)
+#    make_drive_id_index_file(config.drive_command_path, config.drive_sync_dir, config.drive_id_index_filename)
     drive_id_index = parse_drive_id_index(config.drive_id_index_filename)
 
     with open(form_b_filename, "r") as form_b_fp:

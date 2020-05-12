@@ -2,7 +2,7 @@ import post_agents
 import post_accessions_concat
 import post_archival_objects
 import mint_accession_id.mint_accession_id as mint_accession_id
-from nonotuck_file_manipulation import map_file_data, reorganize_files
+from nonotuck_file_manipulation import map_file_data, reorganize_files, make_drive_id_index_file, parse_drive_id_index
 
 from archivesspace import archivesspace
 import argparse
@@ -10,13 +10,14 @@ import logging
 import datetime
 import csv
 
-from nonotuck_config import Config
-config = Config
-
 # for debugging, remove
 from pprint import pprint
 import pickle
 import pdb
+
+from nonotuck_config import Config
+config = Config()
+
 
 ASPACE_REPO_CODE = 'A'
 ASPACE_REPO_NUMBER = 4
@@ -85,14 +86,16 @@ if __name__ == "__main__":
     all_accessions_data = aspace.getPaged(f"/repositories/{ASPACE_REPO_NUMBER}/accessions")
     # all_accessions_data = pickle.load(open('accessions1109.pickle', 'rb'))
 
+    make_drive_id_index_file(config.drive_command_path, config.drive_sync_dir, config.drive_id_index_filename)
+    drive_id_index = parse_drive_id_index(config.drive_id_index_filename)
+
     # Reads CSV file
     with open(csv_filename, encoding="utf8", errors="ignore") as csvfile:
         csvreader = csv.DictReader(csvfile)
 
         report = {}
         for row in csvreader:
-            logging.error(row['full_name'])
-            if row['nanci_checkB1'].lower() == 'true' and row['nanci_checkB2'].lower() == 'true' and row['nanci_checkA'].lower == 'true':
+            if row['nanci_checkB1'].lower() == 'true' and row['nanci_checkB2'].lower() == 'true' and row['nanci_checkA'].lower() == 'true':
                 agent_uri = make_agent(row, aspace)
                 if agent_uri is None:
                     logging.error(f"No agent created or found, skipping this record! {row['full_name']}")
@@ -107,12 +110,12 @@ if __name__ == "__main__":
                     # up to date information, without having to query the server
                     # which is slooooow.
                     all_accessions_data.append(record)
-                    ### Do file manipulation
-                    # Map google drive URLs to filenames and paths in the synced
-                    # drive folder
-                    submission_file_data = map_file_data(row, drive_id_index, accession_id)
-                    # Now copy the files into a desired human friendly structure
-                    # in the working directory
-                    reorganize_files(submission_file_data, config.working_dir)
+                    # ### Do file manipulation
+                    # # Map google drive URLs to filenames and paths in the synced
+                    # # drive folder
+                    # submission_file_data = map_file_data(row, drive_id_index, accession_id)
+                    # # Now copy the files into a desired human friendly structure
+                    # # in the working directory
+                    # reorganize_files(submission_file_data, config.working_dir)
 
         pprint(report)

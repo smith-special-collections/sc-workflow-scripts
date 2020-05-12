@@ -46,7 +46,8 @@ def get_accession_ids(accessionS):
             }
             accession_idS.append(myid)
         except Exception as e:
-            logging.debug(f"Skipping ID for {accession} invalid: {e}")
+            pass
+            # logging.debug(f"Skipping ID for {accession} invalid: {e}")
 
     return accession_idS
 

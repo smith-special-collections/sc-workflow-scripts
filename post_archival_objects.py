@@ -210,23 +210,17 @@ def make_archival_object(row, agent_uri, accession_id):
         ao_dict['restrictions_apply'] = False
     else:
         ao_dict['restrictions_apply'] = True
-        accessrestrict_note = {}
-        accessrestrict_note['jsonmodel_type'] = 'note_multipart'
-        accessrestrict_note['publish'] = True
-        accessrestrict_note['type'] = 'accessrestrict'
-        accessrestrict_note['subnotes'] = []
-        accessrestrict_subnote = {}
-        accessrestrict_subnote['jsonmodel_type'] = 'note_text'
-        accessrestrict_subnote['publish'] = True
-        accessrestrict_subnote['content'] = 'At the direction of the donor, this material is closed until January 1, 2026.'
+        access_restriction = {'jsonmodel_type': 'note_multipart',
+                           'publish': True,
+                           'rights_restriction': {'begin': DATE, 'end': '2026-01-01', 'local_access_restriction_type': ["RestrictedSpecColl"]},
+                           'subnotes': [{'content': 'At the direction of the donor, this material is closed until January 1, 2026.',
+                           'jsonmodel_type': 'note_text',
+                           'publish': True}],
+                           'type': 'accessrestrict'}
         try:
-            accessrestrict_note['subnotes'].append(accessrestrict_subnote)
+            ao_dict['notes'].append(access_restriction)
         except KeyError:
-            logging.error ('issue with accessrestrict subnote', KeyError)
-        try:
-            ao_dict['notes'].append(accessrestrict_note)
-        except KeyError:
-            logging.error ('issue with accessrestrict note', KeyError)
+            logging.error ('issue with access restriction note', KeyError)
 
     # Add donor agent as creator only if they say "yes" they created it
     role = str(row['created'])

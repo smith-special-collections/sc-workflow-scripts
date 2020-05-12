@@ -20,7 +20,7 @@ def make_archival_object(row, agent_uri, accession_id):
     full_name = row['full_name']
     ao_dict = {'jsonmodel_type':'archival_object',
                  'publish': True,
-                 'component_id': str(accession_id['id_0']) + '-' + str(accession_id['id_1']) + '-' + str(accession_id['id_2']),
+                 'component_id': 'Accession ' + str(accession_id['id_0']) + '-' + str(accession_id['id_1']) + '-' + str(accession_id['id_2']),
                  'title': f"{full_name} {title_string}", #Consider changing the title to be name and the content_description field
                  'level': 'file',
                  'resource': {'ref': '/repositories/4/resources/1630'}
@@ -38,103 +38,77 @@ def make_archival_object(row, agent_uri, accession_id):
 
 
 
-    # Building the file descriptions. This works but is messy. Jinja template would be better if have time.
+    # Building the file descriptions for the defined list.
     if len(row['file1_desc']) != 0:
         if len(row['file1_date']) != 0:
-            file1 = 'Includes: ' + str(row['file1_desc']).strip() + ', ' + row['file1_date']
+            file1 = str(row['file1_desc']).strip('. ') + ', ' + row['file1_date']
         else:
-            file1 = 'Includes: ' + str(row['file1_desc']).strip()
+            file1 = str(row['file1_desc'])
     else:
         file1 = None
     if len(row['file2_desc']) != 0:
         if len(row['file2_date']) != 0:
-            file2 = '; ' + str(row['file2_desc']).strip() + ', ' + row['file2_date']
+            file2 = str(row['file2_desc']).strip('. ') + ', ' + row['file2_date']
         else:
-            file2 = '; ' + str(row['file2_desc']).strip()
+            file2 = str(row['file2_desc'])
     else:
         file2 = None
     if len(row['file3_desc']) != 0:
         if len(row['file3_date']) != 0:
-            file3 = '; ' + str(row['file3_desc']).strip() + ', ' + row['file3_date']
+            file3 = str(row['file3_desc']).strip('. ') + ', ' + row['file3_date']
         else:
-            file3 = '; ' + str(row['file3_desc']).strip()
+            file3 = str(row['file3_desc'])
     else:
         file3 = None
     if len(row['file4_desc']) != 0:
         if len(row['file4_date']) != 0:
-            file4 = '; ' + str(row['file4_desc']).strip() + ', ' + row['file4_date']
+            file4 = str(row['file4_desc']).strip('. ') + ', ' + row['file4_date']
         else:
-            file4 = '; ' + str(row['file4_desc']).strip()
+            file4 = str(row['file4_desc'])
     else:
         file4 = None
     if len(row['file5_desc']) != 0:
         if len(row['file5_date']) != 0:
-            file5 = '; ' + str(row['file5_desc']).strip() + ', ' + row['file5_date']
+            file5 = str(row['file5_desc']).strip('. ') + ', ' + row['file5_date']
         else:
-            file5 = '; ' + str(row['file5_desc']).strip()
+            file5 = str(row['file5_desc'])
     else:
         file5 = None
     if len(row['file6_desc']) != 0:
         if len(row['file6_date']) != 0:
-            file6 = '; ' + str(row['file6_desc']).strip() + ', ' + row['file6_date']
+            file6 = str(row['file6_desc']).strip('. ') + ', ' + row['file6_date']
         else:
-            file6 = '; ' + str(row['file6_desc']).strip()
+            file6 = str(row['file6_desc'])
     else:
         file6 = None
     if len(row['file7_desc']) != 0:
         if len(row['file7_date']) != 0:
-            file7 = '; ' + str(row['file7_desc']).strip() + ', ' + row['file7_date']
+            file7 = str(row['file7_desc']).strip('. ') + ', ' + row['file7_date']
         else:
-            file7 = '; ' + str(row['file7_desc']).strip()
+            file7 = str(row['file7_desc'])
     else:
         file7 = None
     if len(row['file8_desc']) != 0:
         if len(row['file8_date']) != 0:
-            file8 = '; ' + str(row['file8_desc']).strip() + ', ' + row['file8_date']
+            file8 = str(row['file8_desc']).strip('. ') + ', ' + row['file8_date']
         else:
-            file8 = '; ' + str(row['file8_desc']).strip()
+            file8 = str(row['file8_desc'])
     else:
         file8 = None
     if len(row['file9_desc']) != 0:
         if len(row['file9_date']) != 0:
-            file9 = '; ' + str(row['file9_desc']).strip() + ', ' + row['file9_date']
+            file9 = '; ' + str(row['file9_desc']).strip('. ') + ', ' + row['file9_date']
         else:
-            file9 = '; ' + str(row['file9_desc']).strip()
+            file9 = str(row['file9_desc'])
     else:
         file9 = None
     if len(row['file10_desc']) != 0:
         if len(row['file10_date']) != 0:
-            file10 = '; ' + str(row['file10_desc']).strip() + ', ' + row['file10_date']
+            file10 = str(row['file10_desc']).strip('. ') + ', ' + row['file10_date']
         else:
-            file10 = '; ' + str(row['file10_desc']).strip()
+            file10 = str(row['file10_desc'])
     else:
         file10 = None
-
-    content_description = row['content_description']
-
-    #Now make the combined description. File 9 and 10 are out of order on the google form so this accounts for that error.
-    if file9 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file10}{file9}"
-    elif file10 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}{file10}"
-    elif file8 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}{file8}"
-    elif file7 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}{file7}"
-    elif file6 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}{file6}"
-    elif file5 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}{file5}"
-    elif file4 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}{file4}"
-    elif file3 != None:
-        combined_description = f"{content_description} {file1}{file2}{file3}"
-    elif file2 != None:
-        combined_description = f"{content_description} {file1}{file2}"
-    elif file1 != None:
-        combined_description = f"{content_description} {file1}"
-    else:
-        combined_description = f"{content_description}"
 
     # Notes
     bioghist = row['bioghist']
@@ -157,7 +131,7 @@ def make_archival_object(row, agent_uri, accession_id):
     sc_note['subnotes'] = []
     sc_subnote = {}
     sc_subnote['jsonmodel_type'] = 'note_text'
-    sc_subnote['content'] = combined_description
+    sc_subnote['content'] = row['content_description']
     sc_subnote['publish'] = True
     userestrict_note = {}
     userestrict_note['jsonmodel_type'] = 'note_multipart'
@@ -205,28 +179,96 @@ def make_archival_object(row, agent_uri, accession_id):
         logging.error ('issue with userestrict note', KeyError)
 
 
-    # Restrictions apply checkbox
+    # Restrictions apply checkbox and machine actionable note
     if row['access'] == 'The materials I contribute can be made available to the public immediately':
         ao_dict['restrictions_apply'] = False
     else:
         ao_dict['restrictions_apply'] = True
-        accessrestrict_note = {}
-        accessrestrict_note['jsonmodel_type'] = 'note_multipart'
-        accessrestrict_note['publish'] = True
-        accessrestrict_note['type'] = 'accessrestrict'
-        accessrestrict_note['subnotes'] = []
-        accessrestrict_subnote = {}
-        accessrestrict_subnote['jsonmodel_type'] = 'note_text'
-        accessrestrict_subnote['publish'] = True
-        accessrestrict_subnote['content'] = 'At the direction of the donor, this material is closed until January 1, 2026.'
+        new_restriction = {'jsonmodel_type': 'note_multipart',
+            'publish': True,
+            'rights_restriction': {'begin': DATE, 'end': '2026-01-01', 'local_access_restriction_type': ["RestrictedSpecColl"]},
+            'subnotes': [{'content': 'At the direction of the donor, this material is closed until January 1, 2026.',
+                          'jsonmodel_type': 'note_text',
+                          'publish': True}],
+            'type': 'accessrestrict'}
         try:
-            accessrestrict_note['subnotes'].append(accessrestrict_subnote)
-        except KeyError:
-            logging.error ('issue with accessrestrict subnote', KeyError)
-        try:
-            ao_dict['notes'].append(accessrestrict_note)
+            ao_dict['notes'].append(new_restriction)
         except KeyError:
             logging.error ('issue with accessrestrict note', KeyError)
+            
+    defined_list = {'jsonmodel_type': 'note_definedlist',
+                        'title': 'Included files:',
+                        'publish': True,
+                        'items': []}
+                
+    #Create items for the defined list
+    item1 = {'label': 'File 1','value': file1}
+    item2 = {'label': 'File 2','value': file2}
+    item3 = {'label': 'File 3','value': file3}
+    item4 = {'label': 'File 4','value': file4}
+    item5 = {'label': 'File 5','value': file5}
+    item6 = {'label': 'File 6','value': file6}
+    item7 = {'label': 'File 7','value': file7}
+    item8 = {'label': 'File 8','value': file8}
+    item9 = {'label': 'File 9','value': file9}
+    item10 = {'label': 'File 10','value': file10}
+    
+    if file1 != None:
+        try:
+            defined_list['items'].append(item1)
+        except KeyError:
+            logging.error ('issue with file1', KeyError)
+    if file2 != None:
+        try:
+            defined_list['items'].append(item2)
+        except KeyError:
+            logging.error ('issue with file2', KeyError)
+    if file3 != None:
+        try:
+            defined_list['items'].append(item3)
+        except KeyError:
+            logging.error ('issue with file3', KeyError)
+    if file4 != None:
+        try:
+            defined_list['items'].append(item4)
+        except KeyError:
+            logging.error ('issue with file4', KeyError)
+    if file5 != None:
+        try:
+            defined_list['items'].append(item5)
+        except KeyError:
+            logging.error ('issue with file5', KeyError)
+    if file6 != None:
+        try:
+            defined_list['items'].append(item6)
+        except KeyError:
+            logging.error ('issue with file6', KeyError)
+    if file7 != None:
+        try:
+            defined_list['items'].append(item7)
+        except KeyError:
+            logging.error ('issue with file7', KeyError)
+    if file8 != None:
+        try:
+            defined_list.append(item8)
+        except KeyError:
+            logging.error ('issue with file8', KeyError)
+    if file9 != None:
+        try:
+            defined_list['items'].append(item9)
+        except KeyError:
+            logging.error ('issue with file9', KeyError)
+    if file10 != None:
+        try:
+            defined_list['items'].append(item10)
+        except KeyError:
+            logging.error ('issue with file10', KeyError)
+            
+    if file1 != None:
+        try:
+            sc_note['subnotes'].append(defined_list)
+        except KeyError:
+            logging.error ('issue with defined list', KeyError)
 
     # Add donor agent as creator only if they say "yes" they created it
     role = str(row['created'])

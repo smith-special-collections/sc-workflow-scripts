@@ -26,7 +26,7 @@ title_string = 'Covid-19 digital materials'
 
 def make_accession(accession, agent_uri, accession_id):
 
-
+    dateormat = datetime.datetime.strptime(str(accession['timestampB']), '%m/%d/%y  %H:%M')
     full_name = accession['full_name']
     gen_note_aff = accession['affiliation']
     gen_note_living = accession['where_living']
@@ -40,7 +40,7 @@ def make_accession(accession, agent_uri, accession_id):
                  'id_2': str(accession_id['id_2']),
                  'acquisition_type': 'gift',
                  'resource_type': 'papers',
-                 'accession_date': DATE,
+                 'accession_date': str(dateformat.date()),
                  'subjects':[{'ref':'/subjects/6201'}],
                  'related_resources':[{'ref':'/repositories/4/resources/1630'}] #Adds the subject "electronic records"
                  }

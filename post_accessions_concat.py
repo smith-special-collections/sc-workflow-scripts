@@ -26,7 +26,7 @@ title_string = 'Covid-19 digital materials'
 
 def make_accession(accession, agent_uri, accession_id):
 
-    dateormat = datetime.datetime.strptime(str(accession['timestampB']), '%m/%d/%y  %H:%M')
+    dateformat = datetime.datetime.strptime(str(accession['timestampB']), '%m/%d/%y  %H:%M')
     full_name = accession['full_name']
     gen_note_aff = accession['affiliation']
     gen_note_living = accession['where_living']

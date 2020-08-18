@@ -11,6 +11,10 @@ Because these scripts are mostly edited scripts from different sources, they req
 Some will request login information within the command line after starting running a script, some require the ArchivesSpace module written by Tristan Chambers for authentication, and some require ArchivesSnake.
 
 ## Scripts
+#### [add_thumbs_file_versions.py](/add_thumbs_file_versions.py)
+Python script that adds thumbnail file versions to existing digital objects using an input CSV. Identical operation to the script addfileversions.py but with certain values in the file version JSON changed to specifically make thumbnail file versions. The CSV should include a header row with the columns "digitalobject_uri" and "file_uri_csv". The script assumes you want the file version to be published, but you can change that to false if necessary. 
+Requires the ArchivesSpace module written by Tristan Chambers to run, and an archviesspace.cfg file with your credentials for authentication.
+
 #### [addfileversions.py](/addfileversions.py)
 Python script that adds file versions to existing digital objects using an input CSV. The CSV should include a header row with the columns "digitalobject_uri", "file_uri_csv", and "caption_csv". The script assumes you want the file version to be published, but you can change that to false if necessary. 
 Requires the ArchivesSpace module written by Tristan Chambers to run, and an archviesspace.cfg file with your credentials for authentication.

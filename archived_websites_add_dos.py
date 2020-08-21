@@ -31,11 +31,11 @@ if secretsVersion != '':
         print('Editing Development')
 else:
     print('Editing Development')
-    
+
 baseURL = secrets.baseURL
 user = secrets.user
 password = secrets.password
-repository = secrets.repository  
+repository = secrets.repository
 
 auth = requests.post(baseURL + '/users/' + user + '/login?password='
                      + password).json()
@@ -66,6 +66,7 @@ with open(archival_object_csv,'r') as csvfile, open(updated_archival_object_csv,
         new_do_id = row[3]
         new_do_title = row[4]
         publish_true_false = row[5]
+        repo_id = row[6]
 
         print ('Found AO: ' + ao_uri)
 
@@ -84,15 +85,15 @@ with open(archival_object_csv,'r') as csvfile, open(updated_archival_object_csv,
         # 'title':new_do_title in line 91 with 'title':display_string
         # Note: this also does not copy over any notes from the archival object
 
-		#display_string = archival_object_json['display_string']
+        display_string = archival_object_json['display_string']
 
         # Form the digital object JSON using the display string from the archival object and the identifier and the file_uri from the csv
 
-        new_digital_object_json = {'title':new_do_title,'digital_object_id':new_do_id,'publish':publish,'file_versions':[{'file_uri':new_do_url,'xlink_actuate_attribute':'onRequest','xlink_show_attribute':'new','caption':new_do_caption,'publish':publish}]}
+        new_digital_object_json = {'title':display_string,'digital_object_id':new_do_id,'publish':publish,'file_versions':[{'file_uri':new_do_url,'xlink_actuate_attribute':'onRequest','xlink_show_attribute':'new','caption':new_do_caption,'publish':publish}]}
         dig_obj_data = json.dumps(new_digital_object_json)
 
         # Post the digital object
-        dig_obj_post = requests.post(baseURL+'/repositories/2/digital_objects',headers=headers,data=dig_obj_data).json()
+        dig_obj_post = requests.post(baseURL+'/repositories/'+repo_id+'/digital_objects',headers=headers,data=dig_obj_data).json()
 
         print ('New DO: ', dig_obj_post)
 

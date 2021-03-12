@@ -13,5 +13,6 @@ ON note.resource_id = resource.id
 LEFT JOIN date
 ON date.resource_id = resource.id
 WHERE
-smith.resource.finding_aid_date BETWEEN (NOW() - INTERVAL 1 MONTH) AND NOW()
+smith.resource.finding_aid_date LIKE '%2021%'
+AND smith.resource.user_mtime BETWEEN (NOW() - INTERVAL 1 MONTH) AND NOW()
 AND smith.note.notes LIKE '%abstract%'

@@ -186,7 +186,7 @@ def make_archival_object(row, agent_uri, accession_id):
         ao_dict['restrictions_apply'] = True
         new_restriction = {'jsonmodel_type': 'note_multipart',
             'publish': True,
-            'rights_restriction': {'begin': DATE, 'end': '2026-01-01', 'local_access_restriction_type': ["RestrictedSpecColl"]},
+            'rights_restriction': {'begin': DATE, 'end': '2026-01-01'},
             'subnotes': [{'content': 'At the direction of the donor, this material is closed until January 1, 2026.',
                           'jsonmodel_type': 'note_text',
                           'publish': True}],

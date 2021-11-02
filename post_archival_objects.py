@@ -250,7 +250,7 @@ def make_archival_object(row, agent_uri, accession_id):
             logging.error ('issue with file7', KeyError)
     if file8 != None:
         try:
-            defined_list.append(item8)
+            defined_list['items'].append(item8)
         except KeyError:
             logging.error ('issue with file8', KeyError)
     if file9 != None:

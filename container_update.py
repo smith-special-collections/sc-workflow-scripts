@@ -4,6 +4,7 @@ import logging
 import csv
 import pprint
 
+#This script replaces the existing indicator of a top container with a provided indicator number. It takes as input a csv file with the columns 'container_uri' and 'indicator'
 
 if __name__ == "__main__":
 

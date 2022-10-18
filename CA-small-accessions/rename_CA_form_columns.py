@@ -26,12 +26,15 @@ renamed = input_csv.rename(columns={'Descriptive title for accession':'acc_title
     'Related collection':'coll',
     'Related resource URI':'resource_uri',
     'Note if there is a deed, donor letter, transfer form or no supporting documents':'donation_info',
-    'Accession identifier':'acc_id_0',
     'Date begin (creation)':'cr_date_begin',
     'Date end (creation)':'cr_date_end',
     'Extent (linear feet)':'extent',
     'Access':'access',
     'Use':'use',
     'Check box to add "immediate source of acquisition" note to AO':'checkbox',
-    'Immediate Source of Acquisition':'acq'})
+    'Immediate Source of Acquisition':'acq',
+    'Accession ID Year':'acc_id_0',
+    'Accession ID Repo':'acc_id_1',
+    'Accession ID Number Part 1':'acc_id_2',
+    'Accession ID Number Part 2':'acc_id_3'})
 renamed.to_csv("CA_small_acc.csv", index=False)

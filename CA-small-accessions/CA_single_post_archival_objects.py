@@ -12,12 +12,13 @@ DATE = datetime.date.today()
 DATE = DATE.__str__()
 
 
-def make_archival_object(row, donor_uri, creator_uri):
+def make_archival_object(row, donor_uri, creator_uri, accession_uri):
     ao_dict = {'jsonmodel_type':'archival_object',
                  'publish': False,
                  'title': row['acc_title'],
                  'level': 'file',
-                 'resource': {'ref':row['resource_uri']}
+                 'resource': {'ref':row['resource_uri']},
+                 'accession_links': [{'ref': accession_uri}]
                  }
 
     # Adding the collection as its parent object
@@ -82,6 +83,8 @@ def make_archival_object(row, donor_uri, creator_uri):
         userestrict_note = {}
         userestrict_note['jsonmodel_type'] = 'note_multipart'
         userestrict_note['publish'] = True
+        userestrict_note['rights_restriction'] = {}
+        userestrict_note['local_access_restriction_type'] = []
         userestrict_note['type'] = 'userestrict'
         userestrict_note['subnotes'] = []
         userestrict_subnote = {}
@@ -98,21 +101,38 @@ def make_archival_object(row, donor_uri, creator_uri):
         except KeyError:
             logging.error ('issue with userestrict note', KeyError)
 
-
-
-
+#Adding immediate source of acquisition
+    if len(row['acq']) > 0:
+        acq_note = {}
+        acq_note['jsonmodel_type'] = 'note_multipart'
+        acq_note['publish'] = True
+        acq_note['type'] = 'acqinfo'
+        acq_note['subnotes'] = []
+        acq_subnote = {}
+        acq_subnote['jsonmodel_type'] = 'note_text'
+        acq_subnote['publish'] = True
+        acq_subnote['content'] = row['acq']
+        try:
+            acq_note['subnotes'].append(acq_subnote)
+        except KeyError:
+            logging.error ('issue with userestrict subnote', KeyError)
+        try:
+            ao_dict['notes'].append(acq_note)
+        except KeyError:
+            logging.error ('issue with acq note', KeyError)
 
 
 
     # Restrictions apply checkbox and machine actionable note
     if row['access'] == 'open':
         ao_dict['restrictions_apply'] = False
+    #This section likely still needs testing
     else:
         ao_dict['restrictions_apply'] = True
         new_restriction = {'jsonmodel_type': 'note_multipart',
             'publish': True,
-            'rights_restriction': {'begin': DATE, 'end': '2026-01-01'},
-            'subnotes': [{'content': 'At the direction of the donor, this material is closed until January 1, 2026.',
+            'rights_restriction': {'begin': DATE, 'end': ''},
+            'subnotes': [{'content': row['access'],
                           'jsonmodel_type': 'note_text',
                           'publish': True}],
             'type': 'accessrestrict'}

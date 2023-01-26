@@ -15,29 +15,12 @@ from pprint import pprint
 import pickle
 import pdb
 
-#from nonotuck_config import Config
-#config = Config()
-
-
 ASPACE_REPO_CODE = 'A'
 ASPACE_REPO_NUMBER = 4
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("requests").setLevel(logging.WARNING)
 logging.getLogger("urllib3").setLevel(logging.WARNING)
-
-# def make_transfer_office(row, aspace):
-#     if len(row['transfer_office_uri']) == 0:
-#         record = CA_single_accessions_makeagents.make_transfer_office_record(row)
-#         try:
-#             post = aspace.post('/agents/corproate_entities', record)
-#             logging.info('Agent record created for {}'.format(row['transfer_office'] + ' URI: ' + post['uri']))
-#             transfer_office_uri = post['uri']
-#         except Exception as e:
-#             logging.warning('Failure to create agent record for {}: {}'.format(row['transfer_office'], e))
-#             transfer_office_uri = None
-#     else:
-#         transfer_office_uri = row['transfer_office_uri']
 
 def make_donor_agent(row, aspace):
     # If there is not an agent_id make an agent
@@ -98,12 +81,12 @@ def make_accession(row, donor_uri, creator_uri):
     try:
         post = aspace.post('/repositories/4/accessions', record)
         logging.info('Accession record created for {}'.format(row['donor_lastname'] + " New URI: " + post['uri']))
-        return record
+        accession_uri = post['uri']
     except Exception as e:
         logging.warning('Failure to create accession record for {}: {}'.format(row['donor_lastname'], e))
         return None
 
-def make_archival_object(row, donor_uri, creator_uri, aspace):
+def make_archival_object(row, donor_uri, creator_uri, accession_uri, aspace):
     archival_object_record = CA_single_post_archival_objects.make_archival_object(row, donor_uri, creator_uri)
     try:
         post = aspace.post('/repositories/4/archival_objects', archival_object_record)
@@ -140,24 +123,10 @@ if __name__ == "__main__":
                     logging.error(f"No agent created or found, skipping this record! {row['donor_lastname']}")
                     continue # Go back to the top of the loop
                 creator_uri = make_creator_agent(row, aspace)
-#                if row['transfer_office'] != None:
-#                    transfer_office_uri = make_transfer_office(row, aspace)
-#                else:
-#                    transfer_office_uri = None
                 record = make_accession(row, donor_uri, creator_uri)
-                archival_object_record = make_archival_object(row, donor_uri, creator_uri, aspace)
-#                if record is not None:
-                    # Keep a local mirror of the state of accession records on the AS
-                    # side, so that get_unique_accession_id() is working with
-                    # up to date information, without having to query the server
-                    # which is slooooow.
-                    #all_accessions_data.append(record)
-                    # ### Do file manipulation
-                    # # Map google drive URLs to filenames and paths in the synced
-                    # # drive folder
-                    # submission_file_data = map_file_data(row, drive_id_index, accession_id)
-                    # # Now copy the files into a desired human friendly structure
-                    # # in the working directory
-                    # reorganize_files(submission_file_data, config.working_dir)
+                record_json = record[0]
+                accession_uri = record[1]
+                archival_object_record = make_archival_object(row, donor_uri, creator_uri, accession_uri, aspace)
+
 
         pprint(report)

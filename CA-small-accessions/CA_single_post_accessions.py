@@ -23,7 +23,7 @@ def make_accession(accession, donor_uri, creator_uri):
                  'id_2': str(accession['acc_id_2']),
                  'id_3': str(accession['acc_id_3']),
                  'acquisition_type': accession['acc_type'].lower(),
-                 'use_restricitons_note': accession['use'],
+                 'use_restrictions_note': accession['use'],
                  'related_resources':[{'ref':accession['resource_uri']}]
                  }
 
@@ -75,7 +75,17 @@ def make_accession(accession, donor_uri, creator_uri):
             acc_dict['linked_agents'].append(linked_agent_creator)
         except KeyError:
             logging.error ('issue with creator linked agent', KeyError)
+#Accounting for cases where the donor is the same as the creator.
+    elif len(accession['donor_person_same_as_creator']) > 0:
+        linked_agent_creator = {}
+        linked_agent_creator['role'] = 'creator'
+        linked_agent_creator['ref'] = donor_uri
+        try:
+            acc_dict['linked_agents'].append(linked_agent_creator)
+        except KeyError:
+            logging.error ('issue with creator linked agent', KeyError)
 
+    
     if len(accession['transfer_office']) > 0:
         linked_agent_transfer = {}
         linked_agent_transfer['role'] = 'source'
@@ -148,8 +158,13 @@ def create_accession_records(aspace, csvreader):
         try:
             post = aspace.post('/repositories/4/accessions', accession_record)
             logging.info('Accession record created for {}'.format(row['donor_lastname'] + " New URI: " + post['uri']))
+            #Attempting to get accession URI
+            accession_uri = post['uri']
         except Exception as e:
             logging.warning('Failure to create accession record for {}: {}'.format(row['donor_lastname'], e))
+ #2022-12-20 Trying to get the accession uris to link
+    return accessions, accession_uri
+    row.append(accessions)
 
 
 if __name__ == "__main__":

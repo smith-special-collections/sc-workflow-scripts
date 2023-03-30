@@ -1,8 +1,7 @@
 import CA_single_accessions_makeagents
 import CA_single_post_accessions
 import CA_single_post_archival_objects
-#import mint_accession_id.mint_accession_id as mint_accession_id
-#from nonotuck_file_manipulation import map_file_data, reorganize_files, make_drive_id_index_file, parse_drive_id_index
+import CA_single_post_events
 
 from archivesspace import archivesspace
 import argparse
@@ -25,8 +24,6 @@ logging.getLogger("urllib3").setLevel(logging.WARNING)
 def make_donor_agent(row, aspace):
     # If there is not an agent_id make an agent
     if len(row['donor_uri']) == 0 and row['donor_type'] == 'person':
-        # Create person donor agent
-        print('No donor URI')
         record = CA_single_accessions_makeagents.make_person_agent_record(row)
         try:
             post = aspace.post('/agents/people', record)
@@ -63,6 +60,7 @@ def make_creator_agent(row, aspace):
             logging.warning('Failure to create agent record for {}: {}'.format(row['creator_lastname'], e))
             creator_uri = None
     elif len(row['creator_uri']) == 0 and row['creator_type'] == 'corporate':
+        record = CA_single_accessions_makeagents.make_corporate_creator_record(row)
         try:
             post = aspace.post('/agents/corproate_entities', record)
             logging.info('Agent record created for {}'.format(row['creator_lastname'] + ' URI: ' + post['uri']))
@@ -87,13 +85,20 @@ def make_accession(row, donor_uri, creator_uri):
         return None
 
 def make_archival_object(row, donor_uri, creator_uri, accession_uri, aspace):
-    archival_object_record = CA_single_post_archival_objects.make_archival_object(row, donor_uri, creator_uri)
+    archival_object_record = CA_single_post_archival_objects.make_archival_object(row, donor_uri, creator_uri, accession_uri)
     try:
         post = aspace.post('/repositories/4/archival_objects', archival_object_record)
         logging.info('Archival object record created for {}'.format(row['donor_lastname'] + " New URI: " + post['uri']))
     except Exception as e:
         logging.warning('Failure to create archival object record for {}: {}'.format(row['donor_lastname'], e))
 
+def make_event(row, accession_uri, aspace):
+    event_record = CA_single_post_events.make_event(row, accession_uri)
+    try:
+        post = aspace.post('/repositories/4/events', event_record)
+        logging.info('Event record created for {}'.format(row['donor_lastname'] + " New URI: " + post['uri']))
+    except Exception as e:
+        logging.warning('Failure to create event record for {}: {}'.format(row['donor_lastname'], e))       
 
 if __name__ == "__main__":
     CONFIGFILE = "archivesspace.cfg"
@@ -122,11 +127,15 @@ if __name__ == "__main__":
                 if donor_uri is None:
                     logging.error(f"No agent created or found, skipping this record! {row['donor_lastname']}")
                     continue # Go back to the top of the loop
-                creator_uri = make_creator_agent(row, aspace)
+                if len(row['donor_same_as_creator']) > 0:
+                    creator_uri = donor_uri
+                else:
+                    creator_uri = make_creator_agent(row, aspace)
                 record = make_accession(row, donor_uri, creator_uri)
                 record_json = record[0]
                 accession_uri = record[1]
                 archival_object_record = make_archival_object(row, donor_uri, creator_uri, accession_uri, aspace)
+                event_record = make_event(row, accession_uri, aspace)
 
 
         pprint(report)

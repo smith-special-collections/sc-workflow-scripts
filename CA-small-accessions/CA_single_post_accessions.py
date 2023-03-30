@@ -12,33 +12,46 @@ DATE = DATE.__str__()
 
 
 def make_accession(accession, donor_uri, creator_uri):
+    
+    #Accession number, getting the right number of digits
+    if len(accession['acc_id_2']) == 1:
+        id_2 = str('000') + str(accession['acc_id_2'])
+    elif len(accession['acc_id_2']) == 2:
+        id_2 = str('00') + str(accession['acc_id_2'])
+    elif len(accession['acc_id_2']) == 3:
+        id_2 = str('0') + str(accession['acc_id_2'])
 
-#    dateformat = datetime.datetime.strptime(str(]), '%Y')
+    if len(accession['acc_id_3']) == 1:
+        id_3 = str('000') + str(accession['acc_id_3'])
+    elif len(accession['acc_id_3']) == 2:
+        id_3 = str('00') + str(accession['acc_id_3'])
+    elif len(accession['acc_id_3']) == 3:
+        id_3 = str('0') + str(accession['acc_id_3'])
+
     acc_dict = {'jsonmodel_type':'accession',
                  'publish': False,
                  'provenance': accession['acq'],
                  'title': accession['acc_title'],
                  'id_0': str(accession['acc_id_0']),
                  'id_1': str(accession['acc_id_1']),
-                 'id_2': str(accession['acc_id_2']),
-                 'id_3': str(accession['acc_id_3']),
+                 'id_2': id_2,
+                 'id_3': id_3,
                  'acquisition_type': accession['acc_type'].lower(),
                  'use_restrictions_note': accession['use'],
                  'related_resources':[{'ref':accession['resource_uri']}]
                  }
 
     #Accession date
-    if len(accession['acc_receipt_date']) == 4:
-        acc_dict['accession_date'] = accession['acc_receipt_date'] + "-01-01"
+    if len(accession['acc_date']) == 4:
+        acc_dict['accession_date'] = accession['acc_date'] + "-01-01"
     elif len(accession['acc_receipt_date']) == 7:
-        acc_dict['accession_date'] = accession['acc_receipt_date'] + "-01"
+        acc_dict['accession_date'] = accession['acc_date'] + "-01"
     else:
-        acc_dict['accession_date'] = accession['acc_receipt_date']
+        acc_dict['accession_date'] = accession['acc_date']
 
     # Access restrictions
-    if accession['access'] == 'open':
+    if len(accession['access']) == 0:
         acc_dict['access_restrictions'] = False
-        acc_dict['access_restrictions_note'] = accession['access']
     else:
         acc_dict['access_restrictions'] = True
         acc_dict['access_restrictions_note'] = accession['access']
@@ -56,17 +69,28 @@ def make_accession(accession, donor_uri, creator_uri):
     # Add donor agent as source
     acc_dict['linked_agents'] = []
 
-
-    if len(accession['donor_lastname']) > 0:
+    if len(accession['donor_lastname']) > 0 and accession['donor_type'] == 'person':
         linked_agent = {}
         linked_agent['role'] = 'source'
-        linked_agent['relator'] = 'dnr'
+        if accession['acc_type'].lower() == 'gift':
+            linked_agent['relator'] = 'dnr'
         linked_agent['ref'] = donor_uri
         try:
             acc_dict['linked_agents'].append(linked_agent)
         except KeyError:
             logging.error ('issue with linked agent', KeyError)
-
+            
+    if len(accession['donor_lastname']) > 0 and accession['donor_type'] == 'corporate':
+        linked_agent_transfer = {}
+        linked_agent_transfer['role'] = 'source'
+        if accession['acc_type'].lower() == 'gift':
+            linked_agent_transfer['relator'] = 'dnr'
+        linked_agent_transfer['ref'] = donor_uri
+        try:
+            acc_dict['linked_agents'].append(linked_agent_transfer)
+        except KeyError:
+            logging.error ('issue with creator linked agent', KeyError)
+    
     if len(accession['creator_lastname']) > 0:
         linked_agent_creator = {}
         linked_agent_creator['role'] = 'creator'
@@ -76,22 +100,12 @@ def make_accession(accession, donor_uri, creator_uri):
         except KeyError:
             logging.error ('issue with creator linked agent', KeyError)
 #Accounting for cases where the donor is the same as the creator.
-    elif len(accession['donor_person_same_as_creator']) > 0:
+    elif len(accession['donor_same_as_creator']) > 0:
         linked_agent_creator = {}
         linked_agent_creator['role'] = 'creator'
         linked_agent_creator['ref'] = donor_uri
         try:
             acc_dict['linked_agents'].append(linked_agent_creator)
-        except KeyError:
-            logging.error ('issue with creator linked agent', KeyError)
-
-    
-    if len(accession['transfer_office']) > 0:
-        linked_agent_transfer = {}
-        linked_agent_transfer['role'] = 'source'
-        linked_agent_transfer['ref'] = accession['transfer_office_uri']
-        try:
-            acc_dict['linked_agents'].append(linked_agent_transfer)
         except KeyError:
             logging.error ('issue with creator linked agent', KeyError)
 
@@ -122,32 +136,46 @@ def make_accession(accession, donor_uri, creator_uri):
 
     # Date field
     acc_dict['dates'] = []
-    date_dict = {}
+    create_date_dict = {}
 
-    if accession['cr_date_end'] != None and accession['cr_date_begin'] != None:
-        date_dict['end'] = accession['cr_date_end']
-        if len(str(accession['cr_date_begin'])) > 4 or len(str(accession['cr_date_begin'])) < 4:
-            date_dict['begin'] = '0000'
-        else:
-            date_dict['begin'] = str(int(accession['cr_date_begin']))
-        date_dict['date_type'] = 'inclusive'
-        date_dict['calendar'] = 'gregorian'
-        date_dict['era'] = 'ce'
-        date_dict['label'] = 'creation'
-        date_dict['jsonmodel_type'] = 'date'
-        acc_dict['dates'].append(date_dict)
-    elif accession['cr_date_end'] is None and accession['cr_date_begin'] != None:
-        if len(str(accession['cr_date_begin'])) > 4 or len(str(accession['cr_date_begin'])) < 4:
-            date_dict['begin'] = '0000'
-        else:
-            date_dict['begin'] = str(int(accession['cr_date_begin']))
-        date_dict['date_type'] = 'single'
-        date_dict['calendar'] = 'gregorian'
-        date_dict['era'] = 'ce'
-        date_dict['label'] = 'creation'
-        date_dict['jsonmodel_type'] = 'date'
-        ao_dict['dates'].append(date_dict)
+    if len(accession['cr_date_end']) > 0 and len(accession['cr_date_begin']) > 0:
+        create_date_dict['end'] = accession['cr_date_end']
+        create_date_dict['begin'] = accession['cr_date_begin']
+        create_date_dict['date_type'] = 'inclusive'
+        create_date_dict['calendar'] = 'gregorian'
+        create_date_dict['era'] = 'ce'
+        create_date_dict['label'] = 'creation'
+        if accession['cr_date_certainty'] != None:
+            create_date_dict['certainty'] = accession['cr_date_certainty']
+        create_date_dict['jsonmodel_type'] = 'date'
+        acc_dict['dates'].append(create_date_dict)
+    elif len(accession['cr_date_end']) == 0 and len(accession['cr_date_begin']) > 0:
+        create_date_dict['begin'] = accession['cr_date_begin']
+        create_date_dict['date_type'] = 'single'
+        create_date_dict['calendar'] = 'gregorian'
+        create_date_dict['era'] = 'ce'
+        create_date_dict['label'] = 'creation'
+        if accession['cr_date_certainty'] != None:
+            create_date_dict['certainty'] = accession['cr_date_certainty']
+        create_date_dict['jsonmodel_type'] = 'date'
+        acc_dict['dates'].append(create_date_dict)
 #End adding in for extent and date
+
+    #Receipt date
+    if len(accession['acc_receipt_date']) >= 4:
+        recept_date_dict = {}
+        if len(accession['acc_receipt_date']) == 4:
+            recept_date_dict['begin'] = accession['acc_receipt_date'] + "-01-01"
+        elif len(accession['acc_receipt_date']) == 7:
+            recept_date_dict['begin'] = accession['acc_receipt_date'] + "-01"
+        else:
+            recept_date_dict['begin'] = accession['acc_receipt_date']
+            recept_date_dict['date_type'] = 'single'
+            recept_date_dict['calendar'] = 'gregorian'
+            recept_date_dict['era'] = 'ce'
+            recept_date_dict['label'] = 'receipt'
+            recept_date_dict['jsonmodel_type'] = 'date'
+            acc_dict['dates'].append(recept_date_dict)
 
     return acc_dict
 

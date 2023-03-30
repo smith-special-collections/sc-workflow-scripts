@@ -182,7 +182,7 @@ def make_corporate_creator_record(agent):
 
     agent_dict = {'jsonmodel_type':'agent_corporate_entity',
                 'publish': True,
-                'notes':[]
+#                'notes':[]
                 }
     # Name information
     agent_dict['names'] = []
@@ -203,7 +203,7 @@ def make_corporate_creator_record(agent):
     except:
         logging.error ('issue with preferred names', KeyError)
 
-
+    print('making corproate creator agent')
     return agent_dict
 
 # def make_transfer_office_record(agent):

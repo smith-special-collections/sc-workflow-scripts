@@ -1,13 +1,13 @@
 import pandas as pd
 
-input_csv = pd.read_csv("CA small accessions-Grid view.csv")
+input_csv = pd.read_csv("CA small accessions-Ready for ASpace.csv")
 
 renamed = input_csv.rename(columns={'Descriptive title for accession':'acc_title',
     'Any descriptive information not already stated in the title (optional)':'acc_desc',
-    'Gift or transfer?':'acc_type',
-    'Date CA received the material (YYYY-MM)':'acc_receipt_date',
+    'Gift, transfer, or purchase?':'acc_type',
+    'Date CA received the material':'acc_receipt_date',
     'Donor type':'donor_type',
-    'Donor last name':'donor_lastname',
+    'Donor last name/organization name':'donor_lastname',
     'Donor first name':'donor_firstname',
     'Donor class year':'donor_classyear',
     'Donor contact - street address':'donor_address',
@@ -16,8 +16,9 @@ renamed = input_csv.rename(columns={'Descriptive title for accession':'acc_title
     'Donor contact - zip code':'donor_zip',
     'Donor email adress':'donor_email',
     'Donor URI':'donor_uri',
+    'Donor same as creator':'donor_same_as_creator',
     'Creator type':'creator_type',
-    'Creator last name':'creator_lastname',
+    'Creator last name/organization name':'creator_lastname',
     'Creator first name':'creator_firstname',
     'Creator class year':'creator_classyear',
     'Creator URI':'creator_uri',

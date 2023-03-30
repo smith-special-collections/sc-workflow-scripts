@@ -14,7 +14,7 @@ DATE = DATE.__str__()
 
 def make_archival_object(row, donor_uri, creator_uri, accession_uri):
     ao_dict = {'jsonmodel_type':'archival_object',
-                 'publish': False,
+                 'publish': True,
                  'title': row['acc_title'],
                  'level': 'file',
                  'resource': {'ref':row['resource_uri']},
@@ -33,27 +33,25 @@ def make_archival_object(row, donor_uri, creator_uri, accession_uri):
 
     ao_dict['dates'] = []
     date_dict = {}
-    if row['cr_date_end'] != None and row['cr_date_begin'] != None:
+    if len(row['cr_date_end']) > 0 and len(row['cr_date_begin']) > 0:
         date_dict['end'] = row['cr_date_end']
-        if len(str(row['cr_date_begin'])) > 4 or len(str(row['cr_date_begin'])) < 4:
-            date_dict['begin'] = '0000'
-        else:
-            date_dict['begin'] = str(int(row['cr_date_begin']))
+        date_dict['begin'] = row['cr_date_begin']
         date_dict['date_type'] = 'inclusive'
         date_dict['calendar'] = 'gregorian'
         date_dict['era'] = 'ce'
         date_dict['label'] = 'creation'
+        if row['cr_date_certainty'] != None:
+            date_dict['certainty'] = row['cr_date_certainty']
         date_dict['jsonmodel_type'] = 'date'
         ao_dict['dates'].append(date_dict)
-    elif row['cr_date_end'] is None and row['cr_date_begin'] != None:
-        if len(str(row['cr_date_begin'])) > 4 or len(str(row['cr_date_begin'])) < 4:
-            date_dict['begin'] = '0000'
-        else:
-            date_dict['begin'] = str(int(row['cr_date_begin']))
+    elif len(row['cr_date_end']) == 0 and len(row['cr_date_begin']) > 0:
+        date_dict['begin'] = row['cr_date_begin']
         date_dict['date_type'] = 'single'
         date_dict['calendar'] = 'gregorian'
         date_dict['era'] = 'ce'
         date_dict['label'] = 'creation'
+        if row['cr_date_certainty'] != None:
+            date_dict['certainty'] = row['cr_date_certainty']
         date_dict['jsonmodel_type'] = 'date'
         ao_dict['dates'].append(date_dict)
 
@@ -121,17 +119,11 @@ def make_archival_object(row, donor_uri, creator_uri, accession_uri):
         except KeyError:
             logging.error ('issue with acq note', KeyError)
 
-
-
-    # Restrictions apply checkbox and machine actionable note
-    if row['access'] == 'open':
-        ao_dict['restrictions_apply'] = False
-    #This section likely still needs testing
-    else:
-        ao_dict['restrictions_apply'] = True
+    # Access restrictions note
+    if len(row['access']) > 0:
         new_restriction = {'jsonmodel_type': 'note_multipart',
             'publish': True,
-            'rights_restriction': {'begin': DATE, 'end': ''},
+            'rights_restriction': {},
             'subnotes': [{'content': row['access'],
                           'jsonmodel_type': 'note_text',
                           'publish': True}],
@@ -141,15 +133,43 @@ def make_archival_object(row, donor_uri, creator_uri, accession_uri):
         except KeyError:
             logging.error ('issue with accessrestrict note', KeyError)
 
-    if len(row['creator_lastname']) > 0:
+    if len(row['creator_lastname']) > 0 or len(row['donor_lastname']) > 0:
         ao_dict['linked_agents'] = []
-        linked_agent_creator = {}
-        linked_agent_creator['role'] = 'creator'
-        linked_agent_creator['ref'] = creator_uri
+
+        if len(row['creator_lastname']) > 0:
+            linked_agent_creator = {}
+            linked_agent_creator['role'] = 'creator'
+            linked_agent_creator['ref'] = creator_uri
+            try:
+                ao_dict['linked_agents'].append(linked_agent_creator)
+            except KeyError:
+                logging.error ('issue with creator linked agent creator', KeyError)
+
+        if len(row['donor_lastname']) > 0:
+            linked_agent_source = {}
+            linked_agent_source['role'] = 'source'
+            linked_agent_source['ref'] = donor_uri
+            if row['acc_type'].lower() == 'gift':
+                linked_agent_source['relator'] = 'dnr'
+            try:
+                ao_dict['linked_agents'].append(linked_agent_source)
+            except KeyError:
+                logging.error ('issue with creator linked agent source', KeyError)
+
+
+    if len(row['top_container_uri']) > 0:
+        ao_dict['instances'] = []
+        instance = {}
+        instance['instance_type'] = 'mixed_materials'
+        instance['jsonmodel_type'] = 'instance'
+        instance['is_representative'] = False
+        instance['sub_container'] = {'jsonmodel_type': 'sub_container',
+        'top_container': {'ref': row['top_container_uri']}}
         try:
-            ao_dict['linked_agents'].append(linked_agent_creator)
+            ao_dict['instances'].append(instance)
         except KeyError:
-            logging.error ('issue with creator linked agent', KeyError)
+            logging.error ('issue with instance', KeyError)
+
 
     return ao_dict
 

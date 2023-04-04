@@ -4,9 +4,7 @@ import logging
 import datetime
 import csv
 
-# This script will create agent records in bulk in ArchivesSpace based on a csv file, and will publish them. The csv file must contain columns labeled last_name, first_name, full_name, legal_name, email, bioghist, and complete.
-#The following fields may be left blank: legal_name, email, bioghist.
-# The field "complete" must have a value of TRUE for that row to be included in the data import.
+# This script will create agent records in bulk in ArchivesSpace based on a csv file, and will publish them.
 
 def make_person_agent_record(agent):
 

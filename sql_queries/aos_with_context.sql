@@ -1,5 +1,6 @@
 SELECT
 archival_object.title,
+CONCAT("/repositories/",archival_object.repo_id,"/archival_objects/",archival_object.id) AS 'uri',
 enumeration_value.`value` AS `level of description`,
 enumeration_value_alias1.`value` AS `date type`,
 date.`begin`,

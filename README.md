@@ -34,3 +34,7 @@ This script requires a secrets.py file with your ArchivesSpace credentials for a
 #### [remove_altformavail_notes_from_aos.py](/remove_altformavail_notes_from_aos.py)
 Python script that deletes Existence and Location of copies notes from specified archival objects using an input CSV. The CSV should include a header row with the archival object uri in a column called "archivalobject_uri". This script can easily be edited to delete other types of notes.
 Requires the ArchivesSpace module written by Tristan Chambers to run, and an archviesspace.cfg file with your credentials for authentication.
+
+## Other Tools
+#### [bulk_import_template_smith_version.xlsx](bulk_import_template_smith_version.xlsx)
+Customized version of the ArchivesSpace bulk archival object importer

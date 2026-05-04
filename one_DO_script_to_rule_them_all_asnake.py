@@ -163,8 +163,8 @@ if __name__ == "__main__":
 
 #repost the digital object that you just updated
                 try:
-                    post = aspace.client.post(record['uri'], json="record").json()
-                    print(post)
+                    post = aspace.client.post(row['do_uri'], json=record).json()
+                    print(post['status'])
                     print('Successful update for {}'.format(post['uri']))
                 except:
                     print('Failed update for {}'.format(row['do_uri']))

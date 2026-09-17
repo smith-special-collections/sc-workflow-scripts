@@ -158,13 +158,18 @@ if __name__ == "__main__":
                     thumb_file_version = add_thumb_fv(row['thumb_fileuri'])
                     record['file_versions'].append(thumb_file_version)
                 record['digital_object_type'] = row['do_type']
+                if len(str(row['do_new_title'])) != 0:
+                    print("Changing the title")
+                    record['title'] = row['do_new_title']
                 print(" Done adding file versions")
                 print(record)
+                digital_object_data = record
 
 #repost the digital object that you just updated
                 try:
-                    post = aspace.client.post(row['do_uri'], json=record).json()
-                    print(post['status'])
-                    print('Successful update for {}'.format(post['uri']))
+                    print("Trying to post record", record['uri'])
+                    digital_object_update = aspace.client.post(row['do_uri'], json=digital_object_data).json()
+                    print(digital_object_update)
+                    print('Successful update for {}'.format(digital_object_update['uri']))
                 except:
-                    print('Failed update for {}'.format(row['do_uri']))
+                    print('Failed update for {}'.format(digital_object_update['do_uri']))
